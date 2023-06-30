@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Employee</title>
+    <script>
+      // open the database
+      var db = openDatabase(
+        "mydb",
+        "1.0",
+        "My first database",
+        2 * 1024 * 1024
+      );
+
+      // create the tables if they don't exist
+      db.transaction(function (tx) {
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS departments (DepNo TEXT PRIMARY KEY, DepName TEXT, Location TEXT)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS employees (EmpNum TEXT PRIMARY KEY, EmpName TEXT, HireDate TEXT, Salary INTEGER, Position TEXT, DepNo TEXT, HeadNo TEXT)"
+        );
+      });
+
+      // add data
+      db.transaction(function (tx) {
+        department_data = [
+          ["00", "Executive", "Silom"],
+          ["10", "Accounting", "Silom"],
+          ["20", "Administration", "Sukhumvit"],
+          ["30", "Sales", "Ratchada"],
+          ["40", "Marketing", "RatcSilomhada"],
+          ["50", "Research", "Sukhumvit"],
+        ];
+
+        for (let index = 0; index < department_data.length; index++) {
+          tx.executeSql(
+            "INSERT OR IGNORE INTO departments (DepNo, DepName, Location) VALUES (?, ?, ?)",
+            department_data[index]
+          );
+        }
+
+        employee_data = [
+          [
+            "0001",
+            "Kanjana",
+            "1994-07-10",
+            50000,
+            "Managing Director",
+            "00",
+            null,
+          ],
+          ["1001", "Surasit", "1994-03-15", 30000, "Manager", "10", "0001"],
+          ["1002", "Jintana", "1993-10-31", 20000, "Supervisor", "10", "1001"],
+          ["1003", "Siriwan", "1993-06-13", 9000, "Clerk", "10", "1001"],
+          ["2001", "Ternjai", "1994-11-01", 24000, "Manager", "20", "0001"],
+
+          ["2002", "Chai", "1993-05-14", 14000, "Clerk", "20", "2001"],
+          ["3001", "Benjawan", "1994-06-11", 29000, "Manager", "30", "0001"],
+          [
+            "3002",
+            "Tanachote",
+            "1994-06-14",
+            25000,
+            "Supervisor",
+            "30",
+            "3001",
+          ],
+          ["3003", "Arlee", "1993-08-15", 17000, "Salesman", "30", "3001"],
+          ["3004", "Mitree", "1993-12-05", 13000, "Salesman", "30", "3001"],
+          ["3005", "Tawatchai", "1994-07-03", 10000, "Salesman", "30", "3001"],
+          ["4001", "Wichai", "1993-12-26", 33000, "Manager", "40", "0001"],
+          ["4002", "Thidarat", "1994-12-01", 9000, "Clerk", "40", "4001"],
+        ];
+
+        for (let index = 0; index < employee_data.length; index++) {
+          tx.executeSql(
+            "INSERT OR IGNORE INTO employees (EmpNum, EmpName, HireDate, Salary, Position, DepNo, HeadNo) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            employee_data[index]
+          );
+        }
+      });
+
+      function setAction(form) {
+        createEmployee();
+        return false;
+      }
+
+      // function to create employee
+      function createEmployee() {
+        console.log("Its Coming");
+        var empNum = document.getElementById("empnum-input").value;
+        var empName = document.getElementById("empname-input").value;
+        var position = document.getElementById("position-input").value;
+
+        document.getElementById("empnum-input").value = "";
+        document.getElementById("empname-input").value = "";
+
+        db.transaction(function (tx) {
+          tx.executeSql(
+            "INSERT INTO employees (EmpNum, EmpName, Position) VALUES (?, ?, ?)",
+            [empNum, empName, position],
+            function (tx, results) {
+              console.log("Employee data inserted successfully");
+            },
+            function (tx, error) {
+              console.log("Error inserting employee data: " + error.message);
+            }
+          );
+        });
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Add Employee</h1>
+    <form onsubmit="return setAction(this)">
+      Employee Number:
+      <input
+        id="empnum-input"
+        type="text"
+        required
+        oninvalid="this.setCustomValidity('คุณยังไม่ได้กรอกรหัสพนักงาน')"
+        oninput="this.setCustomValidity('')"
+      />
+      <br />
+      Name:
+      <input
+        id="empname-input"
+        type="text"
+        required
+        oninvalid="this.setCustomValidity('คุณยังไม่ได้กรอกชื่อพนักงาน')"
+        oninput="this.setCustomValidity('')"
+      />
+      <br />
+      Position:
+      <select name="empname-input" id="position-input">
+        <option value="Managing Director">Managing Director</option>
+        <option value="Manager">Manager</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Clerk">Clerk</option>
+        <option value="Salesman">Salesman</option></select
+      ><br />
+      <button type="submit">Create</button>
+    </form>
+  </body>
+</html>

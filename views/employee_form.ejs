@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="/employee" method="post">
+      <div>
+        <label>Employee Number</label>
+        <input
+          type="text"
+          name="empNum"
+          id="empNum"
+          required
+          oninvalid="this.setCustomValidity('คุณยังไม่ได้กรอกรหัสพนักงาน')"
+          oninput="this.setCustomValidity('')"
+        />
+      </div>
+      <div>
+        <label>Name</label>
+        <input
+          type="text"
+          name="empName"
+          id="empName"
+          required
+          oninvalid="this.setCustomValidity('คุณยังไม่ได้กรอกชื่อพนักงาน')"
+          oninput="this.setCustomValidity('')"
+        />
+      </div>
+      <div>
+        <label>Position</label>
+        <select name="position" id="empPosition">
+          <option value="Managing Director">Managing Director</option>
+          <option value="Manager">Manager</option>
+          <option value="Supervisor">Supervisor</option>
+          <option value="Clerk">Clerk</option>
+          <option value="Salesman">Salesman</option>
+        </select>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
